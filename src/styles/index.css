@@ -11,6 +11,10 @@
   }
 
   body {
-    @apply font-rubik;
+    @apply font-rubik text-dark-gray-1;
+  }
+
+  main {
+    @apply w-screen h-screen overflow-hidden relative;
   }
 }
