@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-very-dark-gray: 0deg 0% 17%;
+    --color-dark-gray: 0deg 0% 59%;
+  }
+
+  body {
+    @apply font-rubik;
+  }
+}
