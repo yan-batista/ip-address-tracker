@@ -26,10 +26,24 @@ function App() {
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    axios
+    /* axios
       .get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
       .then((result) => setResult(result.data))
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err)); */
+
+    fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setResult(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 
     // set up the map
     if (!document.querySelector("#map_container .leaflet-pane")) {
