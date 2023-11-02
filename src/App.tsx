@@ -27,10 +27,15 @@ function App() {
 
   useEffect(() => {
     // get user ip
-    axios
-      .get(`https://api.ipify.org/?format=json`)
-      .then((ip) => setIp(ip.data.ip))
-      .catch((err) => console.error(err));
+    const getUserIp = async () => {
+      try {
+        const response = await axios.get("https://api.ipify.org?format=json");
+        setIp(response.data.ip);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserIp();
 
     axios
       .get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
