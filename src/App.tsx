@@ -1,12 +1,11 @@
 import "./styles/index.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import MobileBackground from "./assets/pattern-bg-mobile.png";
 import DesktopBackground from "./assets/pattern-bg-desktop.png";
 import ArrowRightIcon from "./assets/icon-arrow.svg";
 
 import * as L from "leaflet";
 import axios from "axios";
-import Results from "./result.json";
 
 interface Details {
   ip: string;
@@ -22,20 +21,40 @@ interface Details {
 }
 
 function App() {
-  const [result, setResult] = useState<Details | null>(Results);
+  const [result, setResult] = useState<Details | null>(null);
   const [ip, setIp] = useState("");
+  const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
+    // get user ip
+    axios
+      .get(`https://api.ipify.org/?format=json`)
+      .then((ip) => setIp(ip.data.ip))
+      .catch((err) => console.error(err));
+
+    axios
+      .get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
+      .then((result) => setResult(result.data))
+      .catch((err) => console.error(err));
+
+    // set up the map
     if (!document.querySelector("#map_container .leaflet-pane")) {
-      let map = L.map("map_container").setView([51.505, -0.09], 13);
+      mapRef.current = L.map("map_container").setView(
+        [result?.location.lat || 51.0, result?.location.lng || -0.09],
+        13
+      );
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
+      }).addTo(mapRef.current);
     }
   }, []);
 
-  console.log(result);
+  useEffect(() => {
+    if (result?.location.lat && result.location.lng && mapRef.current) {
+      mapRef.current.setView(new L.LatLng(result.location.lat, result.location.lng));
+    }
+  }, [result]);
 
   function getResultLocationString(): string {
     if (result) {
@@ -63,10 +82,10 @@ function App() {
     const ipInput: HTMLInputElement | null = event.currentTarget.querySelector("#ip_address");
     if (ipInput) ipInput.value = "";
 
-    /* axios
+    axios
       .get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
       .then((result) => setResult(result.data))
-      .catch((err) => console.error(err)); */
+      .catch((err) => console.error(err));
   }
 
   return (
@@ -74,7 +93,7 @@ function App() {
       <img src={MobileBackground} alt="background" className="w-full md:hidden " />
       <img src={DesktopBackground} alt="background" className="w-full h-64 hidden md:inline-block z-10" />
 
-      <div className="w-full z-10 flex flex-col items-center gap-8 absolute top-8">
+      <div className="w-full z-50 flex flex-col items-center gap-8 absolute top-8">
         <p className="text-white font-medium text-3xl">IP Address Tracker</p>
 
         <form
@@ -98,7 +117,7 @@ function App() {
         <div
           className="flex flex-col gap-3 justify-center items-center bg-white rounded-xl w-[90%] p-6 
                      md:flex-row md:gap-0 md:justify-between md:items-start md:h-fit md:divide-x
-                     lg:max-w-3xl"
+                     lg:w-fit lg:max-w-full"
         >
           <div id="located_ip" className="flex flex-col items-center gap-1 md:items-start md:pr-6">
             <p className="uppercase text-dark-gray-2 font-medium text-xs tracking-widest min-w-max">IP ADDRESS</p>
@@ -124,7 +143,7 @@ function App() {
         </div>
       </div>
 
-      <div id="map_container" className="w-full h-full z-0"></div>
+      <div id="map_container" className="w-full h-[72%] z-0"></div>
     </>
   );
 }

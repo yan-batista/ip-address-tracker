@@ -26,6 +26,8 @@ Users should be able to:
 ### Screenshot
 
 <p align="center" >
+  <img src="./public/desktop.png" />
+  <img src="./public/mobile.png" />
 </p>
 
 ### Links
@@ -40,6 +42,9 @@ Users should be able to:
 - [Tailwindcss](https://tailwindcss.com/) - For styles
 - Typescript
 - Mobile First
+- Axios
+- [LeafletJS](https://leafletjs.com/)
+- [IP Geolocation API](https://geo.ipify.org/)
 
 ## Author
 
