@@ -26,17 +26,6 @@ function App() {
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    // get user ip
-    const getUserIp = async () => {
-      try {
-        const response = await axios.get("https://api.ipify.org?format=json");
-        setIp(response.data.ip);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getUserIp();
-
     axios
       .get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
       .then((result) => setResult(result.data))
