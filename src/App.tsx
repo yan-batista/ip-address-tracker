@@ -26,11 +26,6 @@ function App() {
   const mapRef = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    /* axios
-      .get(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
-      .then((result) => setResult(result.data))
-      .catch((err) => console.error(err)); */
-
     fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=${import.meta.env.VITE_API_KEY}&ipAddress=${ip}`)
       .then((response) => {
         if (!response.ok) {
